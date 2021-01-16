@@ -3,7 +3,7 @@ FROM balenalib/raspberry-pi-debian:latest
 LABEL maintainer="Markus Brinkmann m.brinkmann@gmail.com"
 
 # install build dependencies
-RUN install_packages build-essential git libicu63
+RUN install_packages build-essential git libicu63 erlang
 
 RUN mkdir /build && cd /build; \
     git clone --depth 1 -b 3.1.1 https://github.com/apache/couchdb.git; \
