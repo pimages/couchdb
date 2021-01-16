@@ -10,25 +10,25 @@ RUN mkdir /build && cd /build; \
     ls -lA;
 
 # Add CouchDB user account to make sure the IDs are assigned consistently
-RUN groupadd -g 5984 -r couchdb && useradd -u 5984 -d /opt/couchdb -g couchdb couchdb
+#RUN groupadd -g 5984 -r couchdb && useradd -u 5984 -d /opt/couchdb -g couchdb couchdb
 
-RUN set -ex; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
-        apt-transport-https \
-        ca-certificates \
-        dirmngr \
-        gnupg \
-	libicu63 \
-     ; \
-    rm -rf /var/lib/apt/lists/*
+#RUN set -ex; \
+#    apt-get update; \
+#    apt-get install -y --no-install-recommends \
+#        apt-transport-https \
+#        ca-certificates \
+#        dirmngr \
+#        gnupg \
+#	libicu63 \
+#     ; \
+#    rm -rf /var/lib/apt/lists/*
 
-VOLUME	/opt/couchdb/data
+#VOLUME	/opt/couchdb/data
 
-RUN	mkdir -p /opt/couchdb/data; \
-	chown -R couchdb:couchdb /opt/couchdb
+#RUN	mkdir -p /opt/couchdb/data; \
+#	chown -R couchdb:couchdb /opt/couchdb
 
-COPY	--chown=couchdb:couchdb ./couchdb /opt/couchdb/
+#COPY	--chown=couchdb:couchdb ./couchdb /opt/couchdb/
 
 USER	couchdb:couchdb
 
