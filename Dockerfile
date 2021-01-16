@@ -3,10 +3,11 @@ FROM balenalib/raspberry-pi-debian:latest
 LABEL maintainer="Markus Brinkmann m.brinkmann@gmail.com"
 
 # install build dependencies
-RUN install_packages git libicu63
+RUN install_packages build-essential git libicu63
 
 RUN mkdir /build && cd /build; \
     git clone --depth 1 -b 3.1.1 https://github.com/apache/couchdb.git; \
+    cd couchdb && ./configure && make release; \
     ls -lA;
 
 # Add CouchDB user account to make sure the IDs are assigned consistently
