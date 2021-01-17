@@ -12,6 +12,11 @@ RUN set -ex; \
         tini; \
     rm -rf /var/lib/apt/lists/*; 
 
+# Add CouchDB user account to make sure the IDs are assigned consistently
+RUN groupadd -g 5984 -r couchdb && useradd -u 5984 -d /opt/couchdb -g couchdb couchdb
+
+# Install build dependencies, build it and remove them again to keep
+# image as small as possible
 RUN set -ex; \
     apt update; \
     apt install -y --no-install-recommends \
@@ -35,18 +40,14 @@ RUN set -ex; \
         libmozjs185-dev; \
     apt autoremove --purge -o APT::Autoremove::RecommendsImportant=0 -o APT::Autoremove::SuggestsImportant=0; \
     cp -r /build/couchdb/rel/couchdb /opt/; \
+    mkdir -p /opt/couchdb/data; \
+    chown -R couchdb:couchdb /opt/couchdb; \
     rm -rf /build; \
     rm -rf /root/.npm; \
     rm -rf /tmp/*; \
     rm -rf /var/lib/apt/lists/*;
-
-# Add CouchDB user account to make sure the IDs are assigned consistently
-RUN groupadd -g 5984 -r couchdb && useradd -u 5984 -d /opt/couchdb -g couchdb couchdb
-
-RUN	mkdir -p /opt/couchdb/data; \
-    chown -R couchdb:couchdb /opt/couchdb;
     
-#VOLUME	/opt/couchdb/data
+VOLUME	/opt/couchdb/data
 
 # Add configuration
 COPY --chown=couchdb:couchdb 10-docker-default.ini /opt/couchdb/etc/default.d/
