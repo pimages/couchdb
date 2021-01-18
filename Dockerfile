@@ -8,6 +8,7 @@ RUN set -ex; \
     apt install -y --no-install-recommends \
         ca-certificates \
 	    libicu63 \
+        libmozjs185-1.0 \
         gosu \
         tini; \
     rm -rf /var/lib/apt/lists/*; 
@@ -24,7 +25,6 @@ RUN set -ex; \
         git \
         erlang \
         npm \
-        libmozjs185-1.0 \
         libicu-dev \
 	    libmozjs185-dev; \
     mkdir /build && cd /build; \
