@@ -2,19 +2,12 @@ name: Docker
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
+    # Publish `master` as Docker `latest` image and versions as they are.
     branches:
       - master
-
-    # Publish `v1.2.3` tags as releases.
-    tags:
       - v*
 
-  # Run tests for any PRs.
-  pull_request:
-
 env:
-  # TODO: Change variable to your image's name.
   IMAGE_NAME: couchdb
 
 jobs:
@@ -37,10 +30,8 @@ jobs:
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
-  push:
-    # Ensure test job passes before pushing image.
-    # needs: test
 
+  push-github:
     runs-on: [self-hosted, raspi, armhf]
     if: github.event_name == 'push'
 
@@ -63,8 +54,8 @@ jobs:
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
 
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Strip "v" prefix from branch name
+          [[ "${{ github.ref }}" == "v"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
           # Use Docker `latest` tag convention
           [ "$VERSION" == "master" ] && VERSION=latest
@@ -74,3 +65,32 @@ jobs:
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+  push-dockerhub:
+    runs-on: [self-hosted, raspi, armhf]
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+
+      - name: Log into Dockerhub
+        run: docker login -u pimageservice -p $DOCKER_ACCESS_TOKEN
+
+      - name: Push image to Dockerhub
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from branch name
+          [[ "${{ github.ref }}" == "v"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+
+          docker tag $IMAGE_NAME pimages/$IMAGE_NAME:$VERSION
+          docker push pimages/$IMAGE_NAME:$VERSION
+
+
