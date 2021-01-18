@@ -6,6 +6,10 @@ on:
     branches:
       - master
       - v*
+  workflow_dispatch:
+    branches:
+      - master
+      - v*    
 
 env:
   IMAGE_NAME: couchdb
