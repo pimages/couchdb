@@ -35,7 +35,6 @@ RUN set -ex; \
         git \
         erlang \
         npm \
-        libmozjs185-1.0 \
         libicu-dev \
         libmozjs185-dev; \
     apt autoremove --purge -o APT::Autoremove::RecommendsImportant=0 -o APT::Autoremove::SuggestsImportant=0; \
