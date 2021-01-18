@@ -39,9 +39,9 @@ jobs:
   # See also https://docs.docker.com/docker-hub/builds/
   push:
     # Ensure test job passes before pushing image.
-    needs: test
+    # needs: test
 
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, raspi, armhf]
     if: github.event_name == 'push'
 
     steps:
